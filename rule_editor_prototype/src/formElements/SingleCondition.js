@@ -10,11 +10,9 @@ function SingleCondition(props)
                 value={props.conditionType}
                 onChange={props.onChange}
             >
-                <option value="">-- select something --</option>
                 <option value="required">required</option>
                 <option value="optional">optional</option>
             </select>
-            {/* todo: control values below with state from App */}
             &nbsp;&nbsp;&nbsp;
             <input 
                 conditionindex={props.conditionindex}
@@ -32,9 +30,17 @@ function SingleCondition(props)
                 onChange={props.onChange}
             >
                 <option value="">-- select something --</option>
-                <option value="leadership training">leadership training</option>
-                <option value="drivers license">drivers licence</option>
-                <option value="hours of working experience">h of working experience</option>
+                {/* add condition objects below */}
+                <optgroup label="general">
+                    <option value="minimum age">minimum age</option>
+                    <option value="drivers license">drivers licence</option>
+                    <option value="years of working experience">years of working experience</option>
+                </optgroup>
+                <optgroup label="firebrigarde">
+                    <option value="Grundlehrgang">Grundlehrgang</option>
+                    <option value="Refresher Prüfung">Refresher Prüfung</option>
+                    <option value="Gruppenkommandantenprüfung">Gruppenkommandantenprüfung</option>
+                </optgroup>
                 <option value="more stuff">more stuff</option>
             </select>
             &nbsp;&nbsp;&nbsp;

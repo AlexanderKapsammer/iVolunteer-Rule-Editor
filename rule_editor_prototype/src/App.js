@@ -11,14 +11,9 @@ class App extends React.Component
             ruleName: "",
             ruleConditions: [
                 {
-                    conditionType: "",
+                    conditionType: "required",
                     conditionCount: 1,
                     conditionObject: ""
-                },
-                {
-                    conditionType: "",
-                    conditionCount: 1,
-                    conditionObject: "hallo"
                 }
             ]
         };
@@ -38,7 +33,7 @@ class App extends React.Component
     {
         let newRuleConditions = this.state.ruleConditions.slice();
         newRuleConditions.push( {
-            conditionType: "",
+            conditionType: "required",
             conditionCount: 1,
             conditionObject: ""
         } );
@@ -50,6 +45,7 @@ class App extends React.Component
         let newRuleConditions = this.state.ruleConditions.slice();
         newRuleConditions.splice(conditionindex, 1);
         this.setState({ruleConditions: newRuleConditions});
+        this.forceUpdate();
     }
     handleConditionsChange(event)
     {
@@ -86,6 +82,8 @@ class App extends React.Component
         }
 
         // create drools file and export it
+        // all the right data (even if it doesn't show correctly in the app)
+        // sits in this.state!
 
         // just for displaying data
         let message = "New rule name: " + this.state.ruleName + "\n\n";

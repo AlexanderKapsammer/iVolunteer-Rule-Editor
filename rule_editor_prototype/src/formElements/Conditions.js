@@ -3,9 +3,7 @@ import SingleCondition from "./SingleCondition";
 
 function Conditions(props)
 {
-    const ruleConditions = props.ruleConditions.map(
-        (condition) => { return(condition); }
-    );
+    const ruleConditions = props.ruleConditions.slice();
     let singleConditions = [];
     for (let i = 0; i < ruleConditions.length; i++)
     {
@@ -14,6 +12,8 @@ function Conditions(props)
             key={i}
             conditionindex={i}
             conditionType={props.ruleConditions[i].conditionType}
+            conditionCount={props.ruleConditions[i].conditionCount}
+            conditionObject={props.ruleConditions[i].conditionObject}
             onChange={props.onConditionsChange}
             onRemove={props.onSingleRemove}
         />
