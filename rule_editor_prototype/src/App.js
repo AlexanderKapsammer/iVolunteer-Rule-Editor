@@ -10,14 +10,8 @@ class App extends React.Component {
       ruleName: "",
       ruleConditions: [
         {
-          conditionType: "",
           conditionCount: 1,
           conditionObject: ""
-        },
-        {
-          conditionType: "",
-          conditionCount: 1,
-          conditionObject: "hallo"
         }
       ]
     };
@@ -38,7 +32,6 @@ class App extends React.Component {
   handleAddCondition() {
     let newRuleConditions = this.state.ruleConditions.slice();
     newRuleConditions.push({
-      conditionType: "",
       conditionCount: 1,
       conditionObject: ""
     });
@@ -50,6 +43,7 @@ class App extends React.Component {
     let newRuleConditions = this.state.ruleConditions.slice();
     newRuleConditions.splice(conditionindex, 1);
     this.setState({ ruleConditions: newRuleConditions });
+    this.forceUpdate();
   }
 
   handleConditionsChange(event) {
@@ -74,7 +68,6 @@ class App extends React.Component {
   createRule() {
     for (let i = 0; i < this.state.ruleConditions.length; i++) {
       if (
-        this.state.ruleConditions[i].conditionType === "" ||
         this.state.ruleConditions[i].conditionObject === "" ||
         this.state.ruleName === ""
       ) {
@@ -114,8 +107,6 @@ class App extends React.Component {
         " " +
         (i + 1).toString() +
         ".  " +
-        this.state.ruleConditions[i].conditionType +
-        ":   " +
         this.state.ruleConditions[i].conditionCount +
         " " +
         this.state.ruleConditions[i].conditionObject +
