@@ -77,7 +77,32 @@ class App extends React.Component {
     }
 
     // create drools file and export it
-    let drool = 'dialect  "mvel"\r\nimport model.Volunteer \r\n';
+    let drool;
+    /*var rawFile = new XMLHttpRequest();
+    rawFile.open("GET", "./src/rules.drl", false);
+    rawFile.onreadystatechange = () => {
+      if (rawFile.readyState === 4) {
+        if (rawFile.status === 200 || rawFile.status == 0) {
+          drool = rawFile.responseText;
+        } else {
+          drool = 'dialect  "mvel"\r\nimport model.Volunteer \r\n';
+        }
+      } else {
+      }
+    };
+    rawFile.send(void);*/
+    try {
+      require(`${"./src/rules.drl"}`);
+      fetch("./src/rules.drl")
+        .then(r => r.text())
+        .then(text => {
+          drool = text;
+        });
+      alert(drool);
+    } catch (err) {
+      drool = 'dialect  "mvel"\r\nimport model.Volunteer \r\n';
+    }
+
     drool +=
       'rule "' + this.state.ruleName + '" when volunteer: model.Volunteer(';
     for (let i = 0; i < this.state.ruleConditions.length; i++) {
@@ -101,7 +126,8 @@ class App extends React.Component {
     element.click();
 
     // just for displaying data
-    let message = "New rule name: " + this.state.ruleName + "\n\n";
+
+    /*let message = "New rule name: " + this.state.ruleName + "\n\n";
     for (let i = 0; i < this.state.ruleConditions.length; i++) {
       message +=
         " " +
@@ -112,7 +138,7 @@ class App extends React.Component {
         this.state.ruleConditions[i].conditionObject +
         "\n";
     }
-    alert(message);
+    alert(message);*/
   }
 
   render() {
