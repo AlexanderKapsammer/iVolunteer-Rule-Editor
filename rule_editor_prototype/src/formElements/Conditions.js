@@ -2,7 +2,7 @@ import React from "react";
 import SingleCondition from "./SingleCondition";
 
 function Conditions(props) {
-
+  
   let listOfConditions = {
     countConds: [],
     generalConds: [],
@@ -32,6 +32,7 @@ function Conditions(props) {
       singleConditions.push(
         <SingleCondition
           key={ii}
+          existingData={props.existingData}
           conditiontype={condType}
           conditionindex={ii}
           conditionCount={i === 0 || i === 4? countConds[ii].conditionCount : -1}

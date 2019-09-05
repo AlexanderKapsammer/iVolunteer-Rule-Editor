@@ -2,7 +2,9 @@ import React from "react";
 
 function SingleCondition(props) {
   const condType = props.conditiontype;
-  
+
+  console.log(props.existingData);
+
   let dropdownList;
   switch (condType)
   {
@@ -50,6 +52,25 @@ function SingleCondition(props) {
       break;
     }
     case "course": {
+      let courseOptGroups = [];
+      for (let i = 0; i < props.existingData["organisations"].length; i++) {
+        const courses = props.existingData[props.existingData["organisations"][i] + "_courses"].slice();
+        let options = [];
+        for (let ii = 0; ii < courses.length; ii++) {
+          options.push(<option key={ii} value={courses[ii]}>{courses[ii]}</option>)
+        }
+        if (options.length > 0)
+        {
+          courseOptGroups.push(
+            <optgroup 
+              key={i}
+              label={props.existingData["organisations"][i]}
+              >
+              {options}
+            </optgroup>
+          );
+        }
+      }
       dropdownList = <span>
         <select
           conditiontype={condType}
@@ -59,15 +80,20 @@ function SingleCondition(props) {
           onChange={props.onChange}
         >
           <option value="">-- wähle etwas aus --</option>
-          <option value="Rettungssantitäterkurs (100h)">Rettungssantitäterkurs (100h)</option>
-          <option value="Rettungssanitäter Praktikum (160h)">Rettungssanitäter Praktikum (160h)</option>
-          <option value="more stuff">more stuff</option>
+          {courseOptGroups}
         </select>
         &nbsp;&nbsp;&nbsp;
       </span>;
       break;
     }
     case "komp": {
+      let allOptions = [];
+      let existingKomps = props.existingData["competences"].slice();
+      existingKomps.sort();
+      for (let i = 0; i < existingKomps.length; i++) {
+        allOptions.push(<option key={i} value={existingKomps[i]}>{existingKomps[i]}</option>);
+      }
+
       dropdownList = <span>
         <select
           conditiontype={condType}
@@ -77,26 +103,7 @@ function SingleCondition(props) {
           onChange={props.onChange}
         >
           <option value="">-- wähle etwas aus --</option>
-          <option value="Vertrauenswürdigkeit">Vertrauenswürdigkeit</option>
-          <option value="Dialogfähigkeit">Dialogfähigkeit</option>
-          <option value="Höflichkeit">Höflichkeit</option>
-          <option value="Kontaktfähigkeit">Kontaktfähigkeit</option>
-          <option value="Teamfähigkeit">Teamfähigkeit</option>
-          <option value="Kritikfähigkeit">Kritikfähigkeit</option>
-          <option value="Menschenkenntnis">Menschenkenntnis</option>
-          <option value="Konfliktfähigkeit">Konfliktfähigkeit</option>
-          <option value="Respekt">Respekt</option>
-          <option value="Rücksichtsnahme">Rücksichtsnahme</option>
-          <option value="Wertschätzung">Wertschätzung</option>
-          <option value="Empathie">Empathie</option>
-          <option value="Motivation">Motivation</option>
-          <option value="Wachsamkeit">Wachsamkeit</option>
-          <option value="Strategievermögen">Strategievermögen</option>
-          <option value="Ziele setzten">Ziele setzen</option>
-          <option value="Selbstdisziplin">Selbstdisziplin</option>
-          <option value="Veranwortungsvoll">Veranwortungsvoll</option>
-          <option value="Lernfähigkeit">Lernfähigkeit</option>
-          <option value="more stuff">more stuff</option>
+          {allOptions}
         </select>
         &nbsp;&nbsp;&nbsp;     
       </span>;
@@ -114,6 +121,10 @@ function SingleCondition(props) {
         />
         &nbsp;&nbsp;&nbsp;
       </span>
+      break;
+    }
+    default: {
+      throw new Error("Can not render invalid conditon type of \"" + condType + "\"!");
     }
   }
 

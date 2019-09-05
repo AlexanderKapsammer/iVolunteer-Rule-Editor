@@ -1,0 +1,37 @@
+{
+    "organisations": [
+        "Rotes Kreuz",
+        "Feuerwehr OÖ"
+    ],
+    "Rotes Kreuz_courses": [
+        "160h Praktikum",
+        "100h theoretische Ausbildung",
+        "FK- Ausbildung Teil 1",
+        "FK- Ausbildung Teil 2",
+        "FK- Ausbildung Teil 3",
+        "Großunfallmodul",
+        "einschlägige Fortbildung",
+        "Abschlussprüfung Rettungssanitäter"
+    ],
+    "Feuerwehr OÖ_courses": [
+        "Kommandanten Ausbildung"
+    ],
+    "competences": [
+        "Vertrauenswürdigkeit",
+        "Dialogfähigkeit",
+        "Höflichkeit",
+        "Kontaktfähigkeit",
+        "Teamfähigkeit",
+        "Kritikfähigkeit",
+        "Menschenkenntnis", 
+        "Konfliktfähigkeit",
+        "Respekt",
+        "Rücksichtsnahme",
+        "Wertschätzung",
+        "Empathie",
+        "Wachsamkeit",
+        "Strategisches Denken",
+        "Verlässlichkeit",
+        "Motivation"
+    ]
+}

@@ -1,13 +1,12 @@
 import React from "react";
 import RuleName from "./formElements/RuleName";
 import Conditions from "./formElements/Conditions";
+import serverData from "./testData/database.json"
 
 
 
   // TODO:
   
-  // give this app to NOHA
-  // fetch data from json
   // create OR condition
 
 
@@ -17,6 +16,8 @@ class App extends React.Component {
   constructor() {
     super();
     this.state = {
+      existingData: {},
+
       ruleType: "kompetenz",
       ruleName: "",
       ruleConditions: {
@@ -33,6 +34,11 @@ class App extends React.Component {
     this.handleRemoveCondition = this.handleRemoveCondition.bind(this);
     this.handleConditionsChange = this.handleConditionsChange.bind(this);
     this.createRule = this.createRule.bind(this);
+  }
+
+  componentWillMount()
+  {
+    this.setState({existingData: serverData});
   }
 
   handleChange(event) {
@@ -115,7 +121,7 @@ class App extends React.Component {
       let condType = "";
 
       // select type
-      switch (i){
+      switch (i) {
         case 0: {condType = "count"; break;}
         case 1: {condType = "general"; break;}
         case 2: {condType = "course"; break;}
@@ -214,6 +220,7 @@ class App extends React.Component {
         <RuleName value={this.state.ruleName} onChange={this.handleChange} />
         <hr />
         <Conditions
+          existingData={this.state.existingData}
           onAdd={this.handleAddCondition}
           ruleConditions={this.state.ruleConditions}
           onConditionsChange={this.handleConditionsChange}
