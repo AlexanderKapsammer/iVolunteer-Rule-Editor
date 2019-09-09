@@ -3,8 +3,6 @@ import React from "react";
 function SingleCondition(props) {
   const condType = props.conditiontype;
 
-  console.log(props.existingData);
-
   let dropdownList;
   switch (condType)
   {
@@ -12,6 +10,7 @@ function SingleCondition(props) {
       dropdownList = <span>
         <select
           conditiontype={condType}
+          orcondindex={props.orcondindex}
           conditionindex={props.conditionindex}
           name="conditionObject"
           value={props.conditionObject}
@@ -30,6 +29,7 @@ function SingleCondition(props) {
       dropdownList = <span>
         <select
           conditiontype={condType}
+          orcondindex={props.orcondindex}
           conditionindex={props.conditionindex}
           name="conditionObject"
           value={props.conditionObject}
@@ -74,6 +74,7 @@ function SingleCondition(props) {
       dropdownList = <span>
         <select
           conditiontype={condType}
+          orcondindex={props.orcondindex}
           conditionindex={props.conditionindex}
           name="conditionObject"
           value={props.conditionObject}
@@ -87,23 +88,39 @@ function SingleCondition(props) {
       break;
     }
     case "komp": {
-      let allOptions = [];
+      let allKompOptions = [];
+      let allMsOptions = [];
       let existingKomps = props.existingData["competences"].slice();
-      existingKomps.sort();
+      existingKomps.sort((a, b) => {
+        return a.toLowerCase().localeCompare(b.toLowerCase());
+      });
+      let existingMilestones = props.existingData["milestones"].slice();
+      existingMilestones.sort((a, b) => {
+        return a.toLowerCase().localeCompare(b.toLowerCase());
+      });
       for (let i = 0; i < existingKomps.length; i++) {
-        allOptions.push(<option key={i} value={existingKomps[i]}>{existingKomps[i]}</option>);
+        allKompOptions.push(<option key={i} value={existingKomps[i]}>{existingKomps[i]}</option>);
+      }
+      for (let i = 0; i < existingMilestones.length; i++) {
+        allMsOptions.push(<option key={i} value={existingMilestones[i]}>{existingMilestones[i]}</option>);
       }
 
       dropdownList = <span>
         <select
           conditiontype={condType}
+          orcondindex={props.orcondindex}
           conditionindex={props.conditionindex}
           name="conditionObject"
           value={props.conditionObject}
           onChange={props.onChange}
         >
           <option value="">-- wähle etwas aus --</option>
-          {allOptions}
+          <optgroup label="Kompetenzen">
+            {allKompOptions}
+          </optgroup>
+          <optgroup label="Meilensteine">
+            {allMsOptions}
+          </optgroup>
         </select>
         &nbsp;&nbsp;&nbsp;     
       </span>;
@@ -113,6 +130,7 @@ function SingleCondition(props) {
       dropdownList = <span>
         <input 
           conditiontype={condType}
+          orcondindex={props.orcondindex}
           conditionindex={props.conditionindex}
           name="conditionObject"
           value={props.conditionObject}
@@ -130,9 +148,11 @@ function SingleCondition(props) {
 
   return (
     <div>
-      {condType === "count" || condType === "feedback"? <span>
+      {condType === "count" || condType === "feedback"? 
+        <span>
           <input
             conditiontype={condType}
+            orcondindex={props.orcondindex}
             conditionindex={props.conditionindex}
             name="conditionCount"
             style={{ width: 40 }}
@@ -144,7 +164,7 @@ function SingleCondition(props) {
         </span>: null
       }
       {dropdownList}
-      <button conditionindex={props.conditionindex} onClick={props.onRemove} conditiontype={condType}>
+      <button orcondindex={props.orcondindex} conditionindex={props.conditionindex} onClick={props.onRemove} conditiontype={condType}>
         entfernen
       </button>
     </div>

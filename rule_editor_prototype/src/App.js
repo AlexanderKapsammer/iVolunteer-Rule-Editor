@@ -6,11 +6,18 @@ import serverData from "./testData/database.json"
 
 
   // TODO:
-  
-  // create OR condition
 
+  // upload to github
 
+  // create undo dog! (approx. 10x?)
 
+  // when "Kompetenz" is selected, render radio button
+  // to switch between competences and milestones
+
+  // upload to github
+
+  // add conpetences and milestones that are created 
+  // in this editor into database.json
 
 class App extends React.Component {
   constructor() {
@@ -36,6 +43,8 @@ class App extends React.Component {
     this.createRule = this.createRule.bind(this);
   }
 
+  // basic generic methodes
+  // =================================================================================
   componentWillMount()
   {
     this.setState({existingData: serverData});
@@ -48,43 +57,114 @@ class App extends React.Component {
     });
   }
 
+  // specialized methodes to work for Conditions.js and OrCondition.js
+  // =================================================================================
   handleAddCondition(event) {
+    const isOrCond = event.target.getAttribute("isorbutton");
+    const condIndex = event.target.getAttribute("conditionindex");
     const condType = event.target.getAttribute("req_cond_type");
-    let newRuleConditions = this.state.ruleConditions[condType + "Conds"].slice();
-    newRuleConditions.push({
-      conditionCount: condType === "count" || condType === "feedback"? 1 : -1,
-      conditionObject: ""
-    });
-
-    const newState = {
-      ruleConditions: {
-        ...this.state.ruleConditions,
-        [condType + "Conds"]: newRuleConditions
+    let newRuleConditions = isOrCond === null? 
+      this.state.ruleConditions[condType + "Conds"].slice() : 
+      this.state.ruleConditions.orConds[condIndex][condType + "Conds"].slice();
+    let newState;
+    if (condType === "or") {
+      newRuleConditions.push({
+        countConds: [],
+        generalConds: [],
+        courseConds: [],
+        kompConds: [],
+        feedbackConds: []
+      });
+      newState = {
+        ruleConditions: {
+          ...this.state.ruleConditions,
+          ["orConds"]: newRuleConditions
+        }
       }
     }
+    else if (isOrCond === null) {
+      newRuleConditions.push({
+        conditionCount: condType === "count" || condType === "feedback"? 1 : -1,
+        conditionObject: ""
+      });
+      newState = {
+        ruleConditions: {
+          ...this.state.ruleConditions,
+          [condType + "Conds"]: newRuleConditions
+        }
+      }
+    }
+    else {
+      newRuleConditions.push({
+        conditionCount: condType === "count" || condType === "feedback"? 1 : -1,
+        conditionObject: ""
+      });
+
+      const a = {
+        ...this.state.ruleConditions.orConds[condIndex],
+        [condType + "Conds"]: newRuleConditions
+      }
+      let b = this.state.ruleConditions.orConds.slice();
+      b[condIndex] = a;
+
+      newState = {
+        ruleConditions: {
+          ...this.state.ruleConditions,
+          orConds: b
+        }
+      }
+    }
+
     this.setState(newState);
   }
 
   handleRemoveCondition(event) {
     const condType = event.target.getAttribute("conditiontype");
+    const orCondIndex = event.target.getAttribute("orcondindex");
     const conditionindex = event.target.getAttribute("conditionindex");
-    let newRuleConditions = this.state.ruleConditions[condType + "Conds"].slice();
-    newRuleConditions.splice(conditionindex, 1);
+    let newState;
+    if (orCondIndex === null) {
+      let newRuleConditions = this.state.ruleConditions[condType + "Conds"].slice();
+      newRuleConditions.splice(conditionindex, 1);
 
-    const newState = {
-      ruleConditions: {
-        ...this.state.ruleConditions,
-        [condType + "Conds"]: newRuleConditions
+      newState = {
+        ruleConditions: {
+          ...this.state.ruleConditions,
+          [condType + "Conds"]: newRuleConditions
+        }
       }
     }
+    else {
+      let newRuleConditions = this.state.ruleConditions.orConds[orCondIndex][condType + "Conds"].slice();
+      newRuleConditions.splice(conditionindex, 1);
+
+      const a = {
+        ...this.state.ruleConditions.orConds[orCondIndex],
+        [condType + "Conds"]: newRuleConditions
+      }
+      let b = this.state.ruleConditions.orConds.slice();
+      b[orCondIndex] = a;
+
+      newState = {
+        ruleConditions: {
+          ...this.state.ruleConditions,
+          orConds: b
+        }
+      }
+    }
+
     this.setState(newState);
   }
 
   handleConditionsChange(event) {
     const { name, value } = event.target;
     const condType = event.target.getAttribute("conditiontype");
+    const orCondIndex = event.target.getAttribute("orcondindex");
     const conditionindex = event.target.getAttribute("conditionindex");
-    let newRuleConditions = this.state.ruleConditions[condType + "Conds"].slice()
+    let newState;
+    let newRuleConditions = orCondIndex === null? 
+      this.state.ruleConditions[condType + "Conds"].slice() :
+      this.state.ruleConditions.orConds[orCondIndex][condType + "Conds"].slice();
     if (condType === "count" || condType === "feedback") {
       if (name === "conditionCount" && value < 1) {
         alert("The count must be at least 1!");
@@ -104,15 +184,38 @@ class App extends React.Component {
         [name]: value
       };
     }
-    const newState = {
-      ruleConditions: {
-        ...this.state.ruleConditions,
-        [condType + "Conds"]: newRuleConditions
+
+    if (orCondIndex === null) {
+      newState = {
+        ruleConditions: {
+          ...this.state.ruleConditions,
+          [condType + "Conds"]: newRuleConditions
+        }
       }
     }
+    else {
+      const a = {
+        ...this.state.ruleConditions.orConds[orCondIndex],
+        [condType + "Conds"]: newRuleConditions
+      }
+      let b = this.state.ruleConditions.orConds.slice();
+      b[orCondIndex] = a;
+
+      newState = {
+        ruleConditions: {
+          ...this.state.ruleConditions,
+          orConds: b
+        }
+      }
+    }
+
     this.setState(newState);
   }
 
+
+
+  // ===================================================================================
+  // creating the rule!
   createRule() {
 
     // check if form is completed
@@ -208,7 +311,12 @@ class App extends React.Component {
     alert(message);*/
   }
 
+
+  //===============================================================================================================================
+  // render App component
   render() {
+    console.log("=========================================\n=======================================\nstate before rendering:");
+    console.log(this.state);
     return (
       <div>
         <h1>iVolunteer Regel Editor Prototyp</h1>

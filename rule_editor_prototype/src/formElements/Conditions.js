@@ -1,5 +1,6 @@
 import React from "react";
 import SingleCondition from "./SingleCondition";
+import OrCondition from "./OrCondition";
 
 function Conditions(props) {
   
@@ -8,7 +9,8 @@ function Conditions(props) {
     generalConds: [],
     courseConds: [],
     kompConds: [],
-    feedbackConds: []
+    feedbackConds: [],
+    orConds: []
   };
   
   // cycle through condition types
@@ -25,7 +27,6 @@ function Conditions(props) {
       case 4: {condType = "feedback"; break;}
       default: {console.error("This definitely should not have happened. Something major seems to have went wrong!")}
     }
-
     const countConds = props.ruleConditions[condType + "Conds"].slice();
     let singleConditions = [];
     for (let ii = 0; ii < countConds.length; ii++) {
@@ -46,6 +47,20 @@ function Conditions(props) {
     listOfConditions[condType + "Conds"] = singleConditions.slice();
 
   }
+  for (let i = 0; i < props.ruleConditions["orConds"].length; i++) {
+    listOfConditions.orConds.push(
+      <OrCondition
+        key={i}
+        onAdd={props.onAdd}
+        existingData={props.existingData}
+        ruleConditions={props.ruleConditions}
+        conditiontype="or"
+        conditionindex={i}
+        onChange={props.onConditionsChange}
+        onRemove={props.onSingleRemove}
+      />
+    );
+  }
 
 
 
@@ -59,8 +74,7 @@ function Conditions(props) {
       <button onClick={props.onAdd} req_cond_type={"course"}>Kurs</button>
       <button onClick={props.onAdd} req_cond_type={"komp"}>Kompetenz</button>
       <button onClick={props.onAdd} req_cond_type={"feedback"}>Bedingung aus Feedback</button>
-      <button >ODER Verknüpfung</button>
-      <p />
+      <button onClick={props.onAdd} req_cond_type={"or"}>ODER Verknüpfung</button>
       {listOfConditions["countConds"].length > 0? <p>Bedingungen mit Zahlen</p> : <div />}
       <ol>{listOfConditions["countConds"]}</ol>
       {listOfConditions["generalConds"].length > 0? <p>Generelles</p> : <div />}
@@ -71,6 +85,8 @@ function Conditions(props) {
       <ol>{listOfConditions["kompConds"]}</ol>
       {listOfConditions["feedbackConds"].length > 0? <p>Bedingungen aus Feedback</p> : <div />}
       <ol>{listOfConditions["feedbackConds"]}</ol>
+      {listOfConditions["orConds"].length > 0? <p>Oder Bedingungen</p> : <div />}
+      <ol>{listOfConditions["orConds"]}</ol>
     </div>
   );
 }
