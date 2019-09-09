@@ -1,29 +1,17 @@
 import React from "react";
+
 import RuleName from "./formElements/RuleName";
 import Conditions from "./formElements/Conditions";
 import serverData from "./testData/database.json"
 
 
 
-  // TODO:
-
-  // upload to github
-
-  // create undo dog! (approx. 10x?)
-
-  // when "Kompetenz" is selected, render radio button
-  // to switch between competences and milestones
-
-  // upload to github
-
-  // add conpetences and milestones that are created 
-  // in this editor into database.json
-
 class App extends React.Component {
   constructor() {
     super();
     this.state = {
       existingData: {},
+      prevStates: [],
 
       ruleType: "kompetenz",
       ruleName: "",
@@ -37,6 +25,8 @@ class App extends React.Component {
       }
     };
     this.handleChange = this.handleChange.bind(this);
+    this.handleUndo = this.handleUndo.bind(this);
+    this.saveState = this.saveState.bind(this);
     this.handleAddCondition = this.handleAddCondition.bind(this);
     this.handleRemoveCondition = this.handleRemoveCondition.bind(this);
     this.handleConditionsChange = this.handleConditionsChange.bind(this);
@@ -45,6 +35,7 @@ class App extends React.Component {
 
   // basic generic methodes
   // =================================================================================
+
   componentWillMount()
   {
     this.setState({existingData: serverData});
@@ -52,13 +43,48 @@ class App extends React.Component {
 
   handleChange(event) {
     const { name, value } = event.target;
+    this.saveState();
     this.setState(() => {
       return { [name]: value };
     });
   }
 
-  // specialized methodes to work for Conditions.js and OrCondition.js
   // =================================================================================
+  // undo mechanics
+
+  handleUndo()
+  {
+    if (this.state.prevStates.length > 0) {
+      const prevStatesLenght= this.state.prevStates.length;
+      this.setState(prevstate => {
+        let newPrevStates = prevstate.prevStates.slice();
+        newPrevStates.splice(prevStatesLenght - 1, 1)
+        return({
+          ruleType: prevstate.prevStates[prevStatesLenght - 1].ruleType,
+          ruleName: prevstate.prevStates[prevStatesLenght - 1].ruleName,
+          ruleConditions: prevstate.prevStates[prevStatesLenght - 1].ruleConditions,
+          prevStates: newPrevStates
+        });
+      });
+    }
+    else {
+      alert("no previous state available");
+    }
+  }
+  saveState()
+  {
+    this.state.prevStates.push({
+      ruleType: this.state.ruleType,
+      ruleName: this.state.ruleName,
+      ruleConditions: this.state.ruleConditions
+    });
+    if (this.state.prevStates.length > 20) {
+      this.state.prevStates.splice(0, 1);
+    }
+  }
+
+  // =================================================================================
+  // specialized methodes to work for Conditions.js and OrCondition.js
   handleAddCondition(event) {
     const isOrCond = event.target.getAttribute("isorbutton");
     const condIndex = event.target.getAttribute("conditionindex");
@@ -114,7 +140,8 @@ class App extends React.Component {
         }
       }
     }
-
+    
+    this.saveState();
     this.setState(newState);
   }
 
@@ -153,6 +180,7 @@ class App extends React.Component {
       }
     }
 
+    this.saveState();
     this.setState(newState);
   }
 
@@ -209,6 +237,7 @@ class App extends React.Component {
       }
     }
 
+    this.saveState();
     this.setState(newState);
   }
 
@@ -320,9 +349,11 @@ class App extends React.Component {
     return (
       <div>
         <h1>iVolunteer Regel Editor Prototyp</h1>
+        <img onClick={this.handleUndo} src={require("./imgs/undoDog.png")} alt="undo dog"/>
         <hr />
         Regeltyp auswählen:
         <input type="radio" name="ruleType" value="kompetenz" checked={this.state.ruleType === "kompetenz"} onChange={this.handleChange} />Kompenenz
+        <input type="radio" name="ruleType" value="milestone" checked={this.state.ruleType === "milestone"} onChange={this.handleChange} />Meilenstein
         <input type="radio" name="ruleType" value="badge" checked={this.state.ruleType === "badge"} onChange={this.handleChange} />Badge
         <hr />  
         <RuleName value={this.state.ruleName} onChange={this.handleChange} />
