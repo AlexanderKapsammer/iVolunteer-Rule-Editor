@@ -49,11 +49,11 @@ function OrCondition(props)
     }
     return(
         <div>
-            <h3>ODER Element&nbsp;&nbsp;&nbsp;
+            <h4>ODER Element&nbsp;&nbsp;&nbsp;
                 <button conditionindex={props.conditionindex} onClick={props.onRemove} conditiontype="or">
                     entfernen
                 </button>
-            </h3>
+            </h4>
             <button onClick={props.onAdd} conditionindex={props.conditionindex} isorbutton="true" req_cond_type={"count"}>Bedingung mit Zahl</button>
             <button onClick={props.onAdd} conditionindex={props.conditionindex} isorbutton="true" req_cond_type={"general"}>Generelles</button>
             <button onClick={props.onAdd} conditionindex={props.conditionindex} isorbutton="true" req_cond_type={"course"}>Kurs</button>

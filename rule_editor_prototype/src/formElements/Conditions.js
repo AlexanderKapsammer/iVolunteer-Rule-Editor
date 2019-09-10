@@ -67,7 +67,7 @@ function Conditions(props) {
   return (
     <div>
       <h2>
-        <span style={{ color: "#00ff00" }}>Bedingung(en):</span>
+        <span style={{ color: "#0000ff" }}>Bedingung(en):</span>
       </h2>
       <button onClick={props.onAdd} req_cond_type={"count"}>Bedingung mit Zahl</button>
       <button onClick={props.onAdd} req_cond_type={"general"}>Generelles</button>
@@ -75,17 +75,17 @@ function Conditions(props) {
       <button onClick={props.onAdd} req_cond_type={"komp"}>Kompetenz</button>
       <button onClick={props.onAdd} req_cond_type={"feedback"}>Bedingung aus Feedback</button>
       <button onClick={props.onAdd} req_cond_type={"or"}>ODER Verknüpfung</button>
-      {listOfConditions["countConds"].length > 0? <p>Bedingungen mit Zahlen</p> : <div />}
+      {listOfConditions["countConds"].length > 0? <h3>Bedingungen mit Zahlen</h3> : <div />}
       <ol>{listOfConditions["countConds"]}</ol>
-      {listOfConditions["generalConds"].length > 0? <p>Generelles</p> : <div />}
+      {listOfConditions["generalConds"].length > 0? <h3>Generelles</h3> : <div />}
       <ol>{listOfConditions["generalConds"]}</ol>
-      {listOfConditions["courseConds"].length > 0? <p>Kurse</p> : <div />}
+      {listOfConditions["courseConds"].length > 0? <h3>Kurse</h3> : <div />}
       <ol>{listOfConditions["courseConds"]}</ol>
-      {listOfConditions["kompConds"].length > 0? <p>Kompetenzen</p> : <div />}
+      {listOfConditions["kompConds"].length > 0? <h3>Kompetenzen</h3> : <div />}
       <ol>{listOfConditions["kompConds"]}</ol>
-      {listOfConditions["feedbackConds"].length > 0? <p>Bedingungen aus Feedback</p> : <div />}
+      {listOfConditions["feedbackConds"].length > 0? <h3>Bedingungen aus Feedback</h3> : <div />}
       <ol>{listOfConditions["feedbackConds"]}</ol>
-      {listOfConditions["orConds"].length > 0? <p>Oder Bedingungen</p> : <div />}
+      {listOfConditions["orConds"].length > 0? <h3>Oder Bedingungen</h3> : <div />}
       <ol>{listOfConditions["orConds"]}</ol>
     </div>
   );
