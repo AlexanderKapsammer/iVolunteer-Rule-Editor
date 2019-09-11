@@ -50,6 +50,15 @@ function OrCondition(props)
     return(
         <div>
             <h4>ODER Element&nbsp;&nbsp;&nbsp;
+                erfordert&nbsp;
+                <input 
+                    style={{width: 40}}
+                    type="number" 
+                    name="chooseX" 
+                    conditionindex={props.conditionindex} 
+                    value={props.ruleConditions.orConds[props.conditionindex].chooseX}
+                    onChange={props.onChange}
+                />
                 <button conditionindex={props.conditionindex} onClick={props.onRemove} conditiontype="or">
                     entfernen
                 </button>

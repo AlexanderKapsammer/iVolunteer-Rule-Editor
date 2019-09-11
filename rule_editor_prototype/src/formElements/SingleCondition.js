@@ -55,6 +55,9 @@ function SingleCondition(props) {
       let courseOptGroups = [];
       for (let i = 0; i < props.existingData["organisations"].length; i++) {
         const courses = props.existingData[props.existingData["organisations"][i] + "_courses"].slice();
+        courses.sort((a, b) => {
+          return a.toLowerCase().localeCompare(b.toLowerCase());
+        });
         let options = [];
         for (let ii = 0; ii < courses.length; ii++) {
           options.push(<option key={ii} value={courses[ii]}>{courses[ii]}</option>)

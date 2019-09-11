@@ -13,8 +13,10 @@ class App extends React.Component {
       existingData: {},
       prevStates: [],
 
+      ruleImg: "",
       ruleType: "kompetenz",
       ruleName: "",
+      ruleDescription: "",
       ruleConditions: {
         countConds: [],
         generalConds: [],
@@ -42,10 +44,13 @@ class App extends React.Component {
   }
 
   handleChange(event) {
-    const { name, value } = event.target;
-    this.saveState();
+    const { name, value, files} = event.target;
+    const trueValue = files !== null? files.length > 0? URL.createObjectURL(files[0]) : "" : value;
+    if (files === null) {
+      this.saveState();
+    }
     this.setState(() => {
-      return { [name]: value };
+      return { [name]: trueValue };
     });
   }
 
@@ -63,6 +68,7 @@ class App extends React.Component {
           ruleType: prevstate.prevStates[prevStatesLenght - 1].ruleType,
           ruleName: prevstate.prevStates[prevStatesLenght - 1].ruleName,
           ruleConditions: prevstate.prevStates[prevStatesLenght - 1].ruleConditions,
+          ruleDescription: prevstate.prevStates[prevStatesLenght - 1].ruleDescription,
           prevStates: newPrevStates
         });
       });
@@ -76,6 +82,7 @@ class App extends React.Component {
     this.state.prevStates.push({
       ruleType: this.state.ruleType,
       ruleName: this.state.ruleName,
+      ruleDescription: this.state.ruleDescription,
       ruleConditions: this.state.ruleConditions
     });
     if (this.state.prevStates.length > 20) {
@@ -95,6 +102,7 @@ class App extends React.Component {
     let newState;
     if (condType === "or") {
       newRuleConditions.push({
+        chooseX: 1,
         countConds: [],
         generalConds: [],
         courseConds: [],
@@ -165,9 +173,15 @@ class App extends React.Component {
       let newRuleConditions = this.state.ruleConditions.orConds[orCondIndex][condType + "Conds"].slice();
       newRuleConditions.splice(conditionindex, 1);
 
+      let newChooseX = this.state.ruleConditions.orConds[orCondIndex].chooseX - 1;
+      if (newChooseX < 1) {
+        newChooseX = 1;
+      }
+
       const a = {
         ...this.state.ruleConditions.orConds[orCondIndex],
-        [condType + "Conds"]: newRuleConditions
+        [condType + "Conds"]: newRuleConditions,
+        chooseX: newChooseX
       }
       let b = this.state.ruleConditions.orConds.slice();
       b[orCondIndex] = a;
@@ -190,10 +204,38 @@ class App extends React.Component {
     const orCondIndex = event.target.getAttribute("orcondindex");
     const conditionindex = event.target.getAttribute("conditionindex");
     let newState;
-    let newRuleConditions = orCondIndex === null? 
-      this.state.ruleConditions[condType + "Conds"].slice() :
-      this.state.ruleConditions.orConds[orCondIndex][condType + "Conds"].slice();
-    if (condType === "count" || condType === "feedback") {
+    let newRuleConditions 
+    if (name === "chooseX") {
+      newRuleConditions = this.state.ruleConditions.orConds.slice();
+    }
+    else if (orCondIndex === null) {
+      newRuleConditions = this.state.ruleConditions[condType + "Conds"].slice();
+    } else {
+      newRuleConditions = this.state.ruleConditions.orConds[orCondIndex][condType + "Conds"].slice();
+    }
+    if (name === "chooseX") {
+      let innerOrCount = 0;
+      let condTypeTest;
+      for (let i = 0; i < 5; i++) {
+        switch (i) {
+          case 0: {condTypeTest = "count"; break;}
+          case 1: {condTypeTest = "general"; break;}
+          case 2: {condTypeTest = "course"; break;}
+          case 3: {condTypeTest = "komp"; break;}
+          case 4: {condTypeTest = "feedback"; break;}
+          default: {console.error("This definitely should not have happened. Something major seems to have went wrong!")}
+        }
+        innerOrCount += newRuleConditions[conditionindex][condTypeTest + "Conds"].length;
+      }
+      if ((value < 1 || value > innerOrCount) && value !== 1) {
+        alert("Error, value out of range");
+        newRuleConditions[conditionindex].chooseX = this.state.ruleConditions.orConds[conditionindex].chooseX;
+      }
+      else {
+        newRuleConditions[conditionindex].chooseX = value;
+      }
+ 
+    } else if (condType === "count" || condType === "feedback") {
       if (name === "conditionCount" && value < 1) {
         alert("The count must be at least 1!");
         newRuleConditions[conditionindex] = {
@@ -344,15 +386,19 @@ class App extends React.Component {
   //===============================================================================================================================
   // render App component
   render() {
-    console.log("=========================================\n=======================================\nstate before rendering:");
-    console.log(this.state);
+    //console.log("=========================================\n=======================================\nstate before rendering:");
+    //console.log(this.state);
     return (
       <div>
-        <h1>iVolunteer Regel Editor Prototyp</h1>
+        <h1>
+          iVolunteer Regel Editor Prototyp
+        </h1>
         <img onClick={this.handleUndo} src={require("./imgs/undoDog.png")} alt="undo dog"/>
+        <br />
+        <small><i>copyright Nintendo SMM2</i></small>
         <hr />
         Regeltyp auswählen:
-        <input type="radio" name="ruleType" value="kompetenz" checked={this.state.ruleType === "kompetenz"} onChange={this.handleChange} />Kompenenz
+        <input type="radio" name="ruleType" value="kompetenz" checked={this.state.ruleType === "kompetenz"} onChange={this.handleChange} />Kompetenz
         <input type="radio" name="ruleType" value="milestone" checked={this.state.ruleType === "milestone"} onChange={this.handleChange} />Meilenstein
         <input type="radio" name="ruleType" value="badge" checked={this.state.ruleType === "badge"} onChange={this.handleChange} />Badge
         <hr />  
@@ -366,7 +412,29 @@ class App extends React.Component {
           onSingleRemove={this.handleRemoveCondition}
         />
         <hr />
+        <div>
+          <h2><span style={{color: "#009999"}}>Beschreibung: </span></h2>
+          <textarea 
+            name="ruleDescription"
+            placeholder="gib hier eine Beschreibung ein (optional)"
+            style={{resize: "none", height: 100, width: 300}}
+            value={this.state.ruleDescription}
+            onChange={this.handleChange}
+          />
+        </div>
+        <hr />
+        <div>
+          <h2>
+            <span style={{color: "#77aa00"}}>Badge Bild:</span>
+          </h2>
+          {this.state.ruleImg !== ""? <img style={{height: 100, width: 100, objectFit: "cover"}} src={this.state.ruleImg} alt="selected image" /> : null}
+          <br />
+          <input type="file" name="ruleImg" accept="image/jpg, image/jpeg, image/png" onChange={this.handleChange} />
+        </div>
+        <hr />
         <button onClick={this.createRule}>Regel erstellen</button>
+        <hr />
+        <img style={{height: 75, width: 88}} src={require("./imgs/iVolLogo.png")} alt="logo" />
       </div>
     );
   }
