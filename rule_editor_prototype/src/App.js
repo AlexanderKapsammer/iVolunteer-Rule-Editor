@@ -1,6 +1,5 @@
 import React from "react";
 
-import RuleName from "./formElements/RuleName";
 import Conditions from "./formElements/Conditions";
 import serverData from "./testData/database.json"
 
@@ -112,7 +111,7 @@ class App extends React.Component {
       newState = {
         ruleConditions: {
           ...this.state.ruleConditions,
-          ["orConds"]: newRuleConditions
+          orConds: newRuleConditions
         }
       }
     }
@@ -290,8 +289,8 @@ class App extends React.Component {
   createRule() {
 
     // check if form is completed
-      let sthExists = false;
-    for (let i = 0; i < 5; i++) {
+    let sthExists = false;
+    for (let i = 0; i < 6; i++) {
       let condType = "";
 
       // select type
@@ -301,19 +300,45 @@ class App extends React.Component {
         case 2: {condType = "course"; break;}
         case 3: {condType = "komp"; break;}
         case 4: {condType = "feedback"; break;}
+        case 5: {condType = "or"; break;}
         default: {console.error("This definitely should not have happened. Something major seems to have went wrong!")}
       }
       for (let ii = 0; ii < this.state.ruleConditions[condType + "Conds"].length; ii++)
       {
-        sthExists = true;
-        if (this.state.ruleConditions[condType + "Conds"][ii].conditionObject === "") {
-          alert("Complete filling in the form!");
-          return;
+        if (condType === "or") {
+          for(let iii = 0; iii < 5; iii++) {
+            let innerCondType = "";
+            switch (iii) {
+              case 0: {innerCondType = "count"; break;}
+              case 1: {innerCondType = "general"; break;}
+              case 2: {innerCondType = "course"; break;}
+              case 3: {innerCondType = "komp"; break;}
+              case 4: {innerCondType = "feedback"; break;}
+              default: {console.error("This definitely should not have happened. Something major seems to have went wrong!")}
+            }
+            for (let iiii = 0; iiii < this.state.ruleConditions.orConds[ii][innerCondType + "Conds"].length; iiii++) {
+              sthExists = true;
+              if (this.state.ruleConditions.orConds[ii][innerCondType + "Conds"][iiii].conditionObject === "") {
+                alert("Complete filling in the form!");
+                return;
+              }
+            }
+          }
+        } else {
+          sthExists = true;
+          if (this.state.ruleConditions[condType + "Conds"][ii].conditionObject === "") {
+            alert("Complete filling in the form!");
+            return;
+          }
         }
       }
     }
     if (this.state.ruleName === "" || !sthExists) {
       alert("Complete filling in the form!");
+      return;
+    }
+    if (this.state.ruleImg === "") {
+      alert("You are missing an image!");
       return;
     }
 
@@ -401,8 +426,18 @@ class App extends React.Component {
         <input type="radio" name="ruleType" value="kompetenz" checked={this.state.ruleType === "kompetenz"} onChange={this.handleChange} />Kompetenz
         <input type="radio" name="ruleType" value="milestone" checked={this.state.ruleType === "milestone"} onChange={this.handleChange} />Meilenstein
         <input type="radio" name="ruleType" value="badge" checked={this.state.ruleType === "badge"} onChange={this.handleChange} />Badge
-        <hr />  
-        <RuleName value={this.state.ruleName} onChange={this.handleChange} />
+        <hr />
+        <div>
+          <h2><span style={{color: "#ff0000"}}>Regel Name: </span></h2>
+          <input 
+            name="ruleName"
+            type="text"
+            placeholder="gib hier den Namen deiner Regel ein"
+            style={{width: 250}}
+            value={this.state.ruleName}
+            onChange={this.handleChange}
+          />
+        </div>
         <hr />
         <Conditions
           existingData={this.state.existingData}
@@ -427,7 +462,7 @@ class App extends React.Component {
           <h2>
             <span style={{color: "#77aa00"}}>Badge Bild:</span>
           </h2>
-          {this.state.ruleImg !== ""? <img style={{height: 100, width: 100, objectFit: "cover"}} src={this.state.ruleImg} alt="selected image" /> : null}
+          {this.state.ruleImg !== ""? <img style={{height: 100, width: 100, objectFit: "cover"}} src={this.state.ruleImg} alt="selected file " /> : null}
           <br />
           <input type="file" name="ruleImg" accept="image/jpg, image/jpeg, image/png" onChange={this.handleChange} />
         </div>
